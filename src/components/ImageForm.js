@@ -36,6 +36,7 @@ export default class ImageForm extends React.Component {
     link.href = absoluteUrl;
     link.download = 'true';
     document.body.appendChild(link);
+    console.info('downloading...')
     link.click();
     document.body.removeChild(link);
   };
@@ -53,7 +54,9 @@ export default class ImageForm extends React.Component {
       .then(resp => {
         console.info(resp.data);
         setTimeout(() => {
-          this.downloadFile(resp.data);
+          let url = window.location.host + '/' + resp.data;
+          console.info(url);
+          this.downloadFile(url);
         }, 1000);
       }) 
       .catch(console.error);

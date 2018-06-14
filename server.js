@@ -58,7 +58,7 @@ server.post('/images/upload',upload.fields([{ name: 'src_file', maxCount: 1 }, {
     if (err) throw err;
     // results is an array consisting of messages collected during execution
     console.info('results: %j', results);
-    res.send(`${config.serverUrl}/${new_file_name}`);
+    res.send(`${new_file_name}`);
     // res.sendFile('morph_video.mp4', {root: path.join(__dirname, 'public')});
     // res.status(200).json({
     //     message: 'Image Uploaded Successfully !', 
