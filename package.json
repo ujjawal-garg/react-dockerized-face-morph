@@ -1,0 +1,41 @@
+{
+  "name": "react-face-morph",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A React app that generates video of morphing between two faces",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node server.js",
+    "start:react": "react-scripts start",
+    "build": "webpack",
+    "dev": "webpack -wd"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "babel-core": "^6.26.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "multer": "^1.3.0",
+    "python-shell": "^0.5.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-dropzone": "^4.2.11"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.19.1",
+    "eslint-plugin-react": "^7.9.1",
+    "node-sass-middleware": "^0.11.0",
+    "nodemon": "^1.17.5",
+    "react-scripts": "^1.1.4",
+    "webpack-cli": "^3.0.6",
+    "webpack": "^4.12.0"
+  }
+}

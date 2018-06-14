@@ -1,0 +1,35 @@
+body {
+  background: url("./bg.jpg");
+}
+
+.dropzone-container {
+  display: inline-block;
+  width: 49%;
+  vertical-align: top;
+  margin-top: 5rem;
+}
+.dropzone {
+  width: 400px;
+  height: 400px;
+  border-width: 2px;
+  border-color: #666;
+  border-style: dashed;
+  border-radius: 5px;
+  margin: 0 auto;
+  text-align: center;
+  cursor: pointer;
+  background-size: contain;
+  background-repeat: none;
+}
+.button {
+  display: block;
+  margin: 10rem auto;
+  padding: 20px;
+  font-size: 20px;
+  text-transform: uppercase;
+  outline: none;
+  background: #d43653;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 2px 5px 10px rgba(22, 22, 22, 0.1);
+}
