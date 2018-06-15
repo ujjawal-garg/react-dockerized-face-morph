@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start-dev": "nodemon --exec babel-node server.js",
-    "start": "pm2 start --interpreter babel-node server.js",
+    "start": "pm2 start --interpreter babel-node server.js && pm2 logs",
     "start:react": "react-scripts start",
     "build": "webpack",
     "dev": "webpack -wd"
@@ -38,6 +38,6 @@
     "react-scripts": "^1.1.4",
     "webpack-cli": "^3.0.6",
     "webpack": "^4.12.0",
-    "pm2": "2.10.4"
+    "pm2": "^2.10.4"
   }
 }
