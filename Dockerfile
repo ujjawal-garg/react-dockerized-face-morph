@@ -14,7 +14,7 @@ RUN npm i npm@5.10.0 -g
 # Create app directory
 WORKDIR /usr/src/app
 
-COPY py_face_morph/requirements.txt ./py_face_morph/requirements.txt
+COPY ./py_face_morph/requirements.txt ./py_face_morph/requirements.txt
 
 RUN source /usr/local/bin/virtualenvwrapper.sh \
 	&& workon cv \
