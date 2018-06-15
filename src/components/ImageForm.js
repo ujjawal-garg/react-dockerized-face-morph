@@ -1,7 +1,7 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 import axios from 'axios';
-// import download from 'downloadjs';
+import ProgressButton from 'react-progress-button';
 
 
 export default class ImageForm extends React.Component {
@@ -9,40 +9,58 @@ export default class ImageForm extends React.Component {
     super(props);
     this.state = {
       srcFile: null,
-      targetFile: null
+      targetFile: null,
+      buttonState: 'disabled'
     };
   }
 
   onSrcImageDrop(files) {
     this.setState({
       srcFile: files[0],
+      buttonState: '',
       targetFile: this.state.targetFile
     });
-
-    // this.handleImageUpload(files[0]);
+    if(this.state.targetFile && this.state.buttonState === 'disabled') {
+      this.setState({ 
+        buttonState: '',
+        srcFile: this.state.srcFile,
+        targetFile: this.state.targetFile 
+      });
+    }
   }
 
   onTargetImageDrop(files) {
     this.setState({
-      srcFile: this.state.srcFile,
-      targetFile: files[0]
-    });
-
-    // this.handleImageUpload(files[0]);
+      targetFile: files[0],
+      buttonState: '',
+      srcFile: this.state.srcFile
+    }); 
+    if(this.state.srcFile && this.state.buttonState === 'disabled') {
+      this.setState({ 
+        buttonState: '',
+        srcFile: this.state.srcFile,
+        targetFile: this.state.targetFile
+      });
+    }
   }
 
   downloadFile = (absoluteUrl) => {
     let link = document.createElement('a');
     link.href = absoluteUrl;
-    link.download = 'true';
+    link.download = 'morph';
     document.body.appendChild(link);
-    console.info('downloading...')
+    console.info('downloading...');
     link.click();
     document.body.removeChild(link);
   };
 
   handleImageUpload() {
-    // console.info(file);
+
+    this.setState({ 
+      buttonState: 'loading',
+      srcFile: this.state.srcFile,
+      targetFile: this.state.targetFile
+    });
 
     let data = new FormData();
     data.append('src_file', this.state.srcFile);
@@ -52,14 +70,25 @@ export default class ImageForm extends React.Component {
     axios
       .post('images/upload', data)
       .then(resp => {
-        console.info(resp.data);
+
+        this.setState({
+          buttonState: 'success',
+          srcFile: this.state.srcFile,
+          targetFile: this.state.targetFile
+        });
         setTimeout(() => {
-          let url = window.location.host + '/' + resp.data;
-          console.info(url);
+          let url = resp.data;
           this.downloadFile(url);
         }, 1000);
       }) 
-      .catch(console.error);
+      .catch(err => {
+        console.error(err);
+        this.setState({
+          buttonState: 'error',
+          srcFile: this.state.srcFile,
+          targetFile: this.state.targetFile
+        });
+      });
   }
 
   render() {
@@ -114,9 +143,11 @@ export default class ImageForm extends React.Component {
             </div>
           ) : null} */}
         </div>
-        <button className="button" onClick={this.handleImageUpload.bind(this)}>
-          Morph images
-        </button>
+        <div style={{margin: '20px'}}>
+          <ProgressButton onClick={this.handleImageUpload.bind(this)}  state={this.state.buttonState}>
+            Morph image
+          </ProgressButton>
+        </div>
       </div>
     );
   }
