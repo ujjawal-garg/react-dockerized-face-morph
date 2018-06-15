@@ -49,24 +49,44 @@ server.post('/images/upload',upload.fields([{ name: 'src_file', maxCount: 1 }, {
 
   let options = {
     mode: 'text',
+    pythonOptions: ['-u'],
     pythonPath: config.pyEnvPath,
     scriptPath: config.pyScriptPath,
     args: [srcImgpath,targetImgPath,`${config.pyScriptPath}/shape_predictor_68_face_landmarks.dat`, `public/${new_file_name}`]
   };
 
-  PythonShell.run('face_morph.py', options, function (err, results) {
-    if (err) throw err;
-    // results is an array consisting of messages collected during execution
-    console.info('results: %j', results);
-    res.send(`${new_file_name}`);
-    // res.sendFile('morph_video.mp4', {root: path.join(__dirname, 'public')});
-    // res.status(200).json({
-    //     message: 'Image Uploaded Successfully !', 
-    //     srcPath: srcImgpath, 
-    //     pyResult: results,
-    //     targetPath: targetImgPath
-    // });
+  let shell = new PythonShell('face_morph.py', options);
+  shell.on('message', msg => {
+    console.info(msg);
   });
+
+  shell.on('close', () => {
+    if(res){
+      res.send(`${new_file_name}`);
+    }
+
+  });
+
+  shell.on('error', err => {
+    console.info(err);
+    res.status(500).end();
+    res = null;
+    // if (err) throw err;
+  });
+
+  // PythonShell.run('face_morph.py', options, function (err, results) {
+  //   if (err) throw err;
+  //   // results is an array consisting of messages collected during execution
+  //   console.info('results: %j', results);
+  //   res.send(`${new_file_name}`);
+  //   // res.sendFile('morph_video.mp4', {root: path.join(__dirname, 'public')});
+  //   // res.status(200).json({
+  //   //     message: 'Image Uploaded Successfully !', 
+  //   //     srcPath: srcImgpath, 
+  //   //     pyResult: results,
+  //   //     targetPath: targetImgPath
+  //   // });
+  // });
   
 });
     

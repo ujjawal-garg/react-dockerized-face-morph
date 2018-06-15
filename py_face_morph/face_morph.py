@@ -95,8 +95,11 @@ if os.path.isfile(VID_FILE):
     os.remove(VID_FILE)
 
 video = Video(VID_FILE, 20, 600, 800)
-
+i = 0
 for percent in np.linspace(1, 0, num=100):
+    i += 1
+    if i % 10 == 0:
+        print(str(i) + '%' + 2)
     video.write(get_morph(alpha=percent))
 print('Video Write Complete!')
 video.end()
