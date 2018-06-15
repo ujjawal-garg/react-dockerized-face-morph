@@ -5,7 +5,8 @@
   "description": "A React app that generates video of morphing between two faces",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --exec babel-node server.js",
+    "start-dev": "nodemon --exec babel-node server.js",
+    "start": "pm2 start --interpreter babel-node server.js",
     "start:react": "react-scripts start",
     "build": "webpack",
     "dev": "webpack -wd"
@@ -36,6 +37,7 @@
     "nodemon": "^1.17.5",
     "react-scripts": "^1.1.4",
     "webpack-cli": "^3.0.6",
-    "webpack": "^4.12.0"
+    "webpack": "^4.12.0",
+    "pm2": "2.10.4"
   }
 }
