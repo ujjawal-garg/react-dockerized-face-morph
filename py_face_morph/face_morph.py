@@ -1,7 +1,8 @@
 import cv2
 import sys
 import numpy as np
-# from delaunay_div_conq import delaunay
+from delaunay_div_conq import delaunay
+import os
 from delaunay_opencv import get_delaunay
 from feature_detector import extract_features
 from vid_utils import Video
@@ -79,20 +80,23 @@ target_img = cv2.imread(TARGET_IMG)
 src_points = extract_features(SRC_IMG, TRAINED_MODEL_FILE)
 target_points = extract_features(TARGET_IMG, TRAINED_MODEL_FILE)
 
-avg_points = []
+avg_points = {}
 for i in range(0, len(src_points)):
     x = 0.5 * src_points[i][0] + 0.5 * target_points[i][0]
     y = 0.5 * src_points[i][1] + 0.5 * target_points[i][1]
-    avg_points.append((int(x), int(y)))
+    avg_points[(int(x), int(y))] = i
 
 # del_triangles = delaunay(avg_points)
 del_triangles = get_delaunay(avg_points, src_img.shape)
 
 
+##If file exists, delete it
+if os.path.isfile(VID_FILE):
+    os.remove(VID_FILE)
 
 video = Video(VID_FILE, 20, 600, 800)
-for percent in np.linspace(1, 0, num=200):
-    # print 'Writing Frame', 200 - int(percent*200) + 1
+
+for percent in np.linspace(1, 0, num=100):
     video.write(get_morph(alpha=percent))
 print('Video Write Complete!')
 video.end()

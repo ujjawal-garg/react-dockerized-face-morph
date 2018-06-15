@@ -221,7 +221,7 @@ def merge(r_cw_l, s, l_ccw_r, u):
         if above_l_cand:
 
             d_p_l_cand = Dot_product_2v(u_l_c_o_b, v_l_c_o_b, u_l_c_d_b, v_l_c_d_b)
-            cot_l_cand = d_p_l_cand / c_p_l_cand
+            cot_l_cand = d_p_l_cand // c_p_l_cand
 
             while True:
                 next = Next(l_cand, org_base)
@@ -235,7 +235,7 @@ def merge(r_cw_l, s, l_ccw_r, u):
                     break  # Finished.
 
                 d_p_next = Dot_product_2v(u_n_o_b, v_n_o_b, u_n_d_b, v_n_d_b)
-                cot_next = d_p_next / c_p_next
+                cot_next = d_p_next // c_p_next
 
                 if cot_next > cot_l_cand:
                     break  # Finished.
@@ -248,7 +248,7 @@ def merge(r_cw_l, s, l_ccw_r, u):
         if above_r_cand:
 
             d_p_r_cand = Dot_product_2v(u_r_c_o_b, v_r_c_o_b, u_r_c_d_b, v_r_c_d_b)
-            cot_r_cand = d_p_r_cand / c_p_r_cand
+            cot_r_cand = d_p_r_cand // c_p_r_cand
 
             while True:
                 prev = Prev(r_cand, dest_base)
@@ -262,7 +262,7 @@ def merge(r_cw_l, s, l_ccw_r, u):
                     break  # Finished.
 
                 d_p_prev = Dot_product_2v(u_p_o_b, v_p_o_b, u_p_d_b, v_p_d_b)
-                cot_prev = d_p_prev / c_p_prev
+                cot_prev = d_p_prev // c_p_prev
 
                 if cot_prev > cot_r_cand:
                     break  # Finished.
@@ -305,7 +305,7 @@ def divide(pts, l, r):
             l_ccw = a
             r_cw = b
     else:
-        split = (l + r) / 2
+        split = (l + r) // 2
         # print "Divide at", 0, split
         (l_ccw_l, r_cw_l) = divide(pts, l, split)
         # print_incoming_edges(pts)
@@ -364,8 +364,8 @@ def get_triangles(pts, orig_pts):
                     if w < point:
                         if Next(next_e, w) == Prev(e, other_pt):
                             # count += 1
-                            l = [orig_pts.index((point.get_tuple())), orig_pts.index(other_pt.get_tuple()),
-                                 orig_pts.index(w.get_tuple())]
+                            l = [orig_pts[point.get_tuple()], orig_pts[other_pt.get_tuple()],
+                                 orig_pts[w.get_tuple()]]
                             l.sort()
                             traingles.add((l[0], l[1], l[2]))
                 e = Next(e, point)
@@ -377,7 +377,8 @@ def get_triangles(pts, orig_pts):
     return traingles
 
 
-def delaunay(pts, src_img=None, analyse=False):
+def delaunay(pts):
+    # start_time = datetime.now()
 
     # Create an array of points.
     points = []
@@ -385,29 +386,15 @@ def delaunay(pts, src_img=None, analyse=False):
     # Read in the points from a text file
     for pt in pts:
         points.append(Point(pt[0], pt[1]))
-    # print 'Sorting Points...'
 
-    # print 'Div & Conq...'
-    start_time = datetime.now()
+    
     points.sort()
     divide(points, 0, len(points) - 1)
-    running_time = (datetime.now() - start_time).total_seconds()
-    # print "DivConq Algo took", running_time, "seconds"
-    # print 'Find edges and triangles...'
+    # running_time = (datetime.now() - start_time).total_seconds()
 
-    if src_img is not None:
-        img = src_img
-        for point in points:
-            cv2.circle(img, point.get_tuple(), 2, (0, 0, 255), cv2.FILLED, cv2.LINE_AA, 0)
-        edge_set = get_edges(points)
-        # print len(edge_set)
-        for edge in edge_set:
-            cv2.line(img, edge.origin.get_tuple(),
-                     edge.destination.get_tuple(), (255, 255, 255), 1, cv2.LINE_AA, 0)
-        return get_triangles(points, pts), src_img, running_time
-    else:
-        if analyse:
-            return running_time
-        return get_triangles(points, pts)
+    tri = get_triangles(points, pts)
+
+    # print("DivConq Algo took", running_time, "seconds")
+    return tri
 
 

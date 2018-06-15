@@ -40,7 +40,8 @@ def draw_delaunay(img, subdiv, delaunay_color):
             cv2.line(img, pt3, pt1, delaunay_color, 1, cv2.LINE_AA, 0)
 
 
-def get_delaunay(points, img_shape, src_img=None, analyse=False):
+def get_delaunay(points, img_shape):
+    # start_time = datetime.now()
 
     # Rectangle to be used with Subdiv2D
     rect = (0, 0, img_shape[1], img_shape[0])
@@ -48,38 +49,25 @@ def get_delaunay(points, img_shape, src_img=None, analyse=False):
     # Create an instance of Subdiv2D
     subdiv = cv2.Subdiv2D(rect)
 
-    start_time = datetime.now()
     # Insert points into subdiv
     for p in points:
         subdiv.insert(p)
-    # running_time = (datetime.now() - start_time).total_seconds()
-    # print "OpenCV Algo took", running_time, "seconds"
-    # start_time = datetime.now()
+        
     triangles = subdiv.getTriangleList()
-    running_time = (datetime.now() - start_time).total_seconds()
-    # print "OpenCV Reading triangles took", running_time, "seconds"
-
+    
     triangle_indices = set()
     for t in triangles:
         pt1 = (int(t[0]), int(t[1]))
         pt2 = (int(t[2]), int(t[3]))
         pt3 = (int(t[4]), int(t[5]))
         if rect_contains(rect, pt1) and rect_contains(rect, pt2) and rect_contains(rect, pt3):
-            l = [points.index(pt1), points.index(pt2),
-                 points.index(pt3)]
+            l = [points[pt1], points[pt2],
+                 points[pt3]]
             l.sort()
             triangle_indices.add((l[0], l[1], l[2]))
 
-    if src_img is not None:
-        img = src_img
-        # Draw delaunay triangles
-        draw_delaunay(img, subdiv, (255, 255, 255))
+    # running_time = (datetime.now() - start_time).total_seconds()
+    # print("OpenCV Reading triangles took", running_time, "seconds")
 
-        # Draw points
-        for p in points:
-            draw_point(img, p, (0, 0, 255))
-        return triangle_indices, img, running_time
-    if analyse:
-        return triangle_indices, running_time
     return triangle_indices
 
