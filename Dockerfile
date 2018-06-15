@@ -31,7 +31,10 @@ COPY . .
 
 EXPOSE 8080
 
-RUN npm run build
+ENV NODE_ENV production
+ENV PORT 8080
+ENV HOST 0.0.0.0
 
+RUN npm run build
 
 CMD [ "npm", "start" ]
