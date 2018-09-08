@@ -75,16 +75,25 @@ def get_morph(alpha=0.5):
     return cv2.cvtColor(np.uint8(img_morph), cv2.COLOR_RGB2BGR)
 
 
-src_img = cv2.imread(SRC_IMG)
-target_img = cv2.imread(TARGET_IMG)
-src_points = extract_features(SRC_IMG, TRAINED_MODEL_FILE)
-target_points = extract_features(TARGET_IMG, TRAINED_MODEL_FILE)
+# src_img = cv2.imread(SRC_IMG)
+# target_img = cv2.imread(TARGET_IMG)
+src_points, src_img = extract_features(SRC_IMG, TRAINED_MODEL_FILE)
+target_points, target_img  = extract_features(TARGET_IMG, TRAINED_MODEL_FILE)
 
 avg_points = {}
 for i in range(0, len(src_points)):
     x = 0.5 * src_points[i][0] + 0.5 * target_points[i][0]
     y = 0.5 * src_points[i][1] + 0.5 * target_points[i][1]
     avg_points[(int(x), int(y))] = i
+
+
+# print(src_img.shape[:2], target_img.shape[:2])
+
+
+# cv2.imshow("Faces found", src_img)
+# cv2.imshow("Faces found 2", target_img)
+
+# cv2.waitKey(0)
 
 # del_triangles = delaunay(avg_points)
 del_triangles = get_delaunay(avg_points, src_img.shape)
