@@ -6,10 +6,10 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install nodejs carbon
 RUN apt-get update && apt-get -y install curl \
-	&& curl -sL https://deb.nodesource.com/setup_8.x | bash \
+	&& curl -sL https://deb.nodesource.com/setup_20.x | bash \
 	&& apt-get install -y nodejs build-essential
 
-RUN npm i npm@5.10.0 -g
+RUN npm i npm@10.5.0 -g
 
 # Create app directory
 WORKDIR /usr/src/app
