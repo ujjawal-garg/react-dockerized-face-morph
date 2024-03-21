@@ -5,40 +5,54 @@
   "description": "A React app that generates video of morphing between two faces",
   "main": "server.js",
   "scripts": {
-    "start-dev": "nodemon --exec babel-node server.js",
+    "start-dev": "nodemon --exec babel-node server.js -e js,scss,mjs,cjs,json",
     "start": "pm2 start --interpreter babel-node server.js && pm2 logs",
     "start:react": "react-scripts start",
-    "build": "webpack -p --minimize",
-    "dev": "webpack -wd"
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --devtool eval-cheap-module-source-map --output-pathinfo"
   },
   "author": "Ujjawal Garg",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.18.0",
-    "babel-core": "^6.26.3",
-    "ejs": "^2.6.1",
-    "express": "^4.16.3",
-    "multer": "^1.3.0",
-    "python-shell": "^0.5.0",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "react-dropzone": "^4.2.11",
-    "react-progress-button": "^5.1.0"
+    "express": "^4.19.1",
+    "react-progress-button": "^5.1.0",
+    "axios": "^1.6.8",
+    "ejs": "^3.1.9",
+    "multer": "^1.4.5-lts.1",
+    "npm": "^10.5.0",
+    "python-shell": "^5.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.2.3",
-    "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "eslint": "^4.19.1",
-    "eslint-plugin-react": "^7.9.1",
-    "node-sass-middleware": "^0.11.0",
-    "nodemon": "^1.17.5",
-    "pm2": "^2.10.4",
-    "react-scripts": "^1.1.4",
-    "webpack": "^4.12.0",
-    "webpack-cli": "^3.0.6"
+    "@babel/cli": "^7.24.1",
+    "@babel/core": "^7.24.1",
+    "@babel/eslint-parser": "^7.24.1",
+    "@babel/node": "^7.23.9",
+    "@babel/preset-env": "^7.24.1",
+    "@babel/preset-react": "^7.24.1",
+    "@types/react-dom": "^18.2.22",
+    "babel-loader": "^9.1.3",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "node-sass-middleware": "^1.1.0",
+    "nodemon": "^3.1.0",
+    "pm2": "^5.3.1",
+    "react-scripts": "^5.0.1",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

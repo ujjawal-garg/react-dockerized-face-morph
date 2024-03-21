@@ -1,50 +1,40 @@
-import React from 'react';
-import Dropzone from 'react-dropzone';
+import React, { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone'
 import axios from 'axios';
 import ProgressButton from 'react-progress-button';
 
+const ImageForm = () => {
+  const [srcFile, setSrcFile] = useState(null);
+  const [targetFile, setTargetFile] = useState(null);
+  const [buttonState, setButtonState] = useState('disabled');
 
-export default class ImageForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      srcFile: null,
-      targetFile: null,
-      buttonState: 'disabled'
-    };
-  }
+  const onSrcImageDrop = useCallback(acceptedFiles => {
+    console.log('src dropped', acceptedFiles);
+    setSrcFile(acceptedFiles[0]);
+    setButtonState(targetFile ? '' : 'disabled');
+  }, []);
 
-  onSrcImageDrop(files) {
-    this.setState({
-      srcFile: files[0],
-      buttonState: '',
-      targetFile: this.state.targetFile
-    });
-    if(this.state.targetFile && this.state.buttonState === 'disabled') {
-      this.setState({ 
-        buttonState: '',
-        srcFile: this.state.srcFile,
-        targetFile: this.state.targetFile 
-      });
+
+  const onTargetImageDrop = useCallback(acceptedFiles => {
+    console.log('target dropped', acceptedFiles);
+    setTargetFile(acceptedFiles[0]);
+    setButtonState(srcFile ? '' : 'disabled');
+  }, []);
+
+  const { getRootProps: getSrcRootProps, getInputProps: getSrcInputProps, isDragActive: isSrcDragActive } = useDropzone({
+    onDrop: onSrcImageDrop,
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png'],
     }
-  }
-
-  onTargetImageDrop(files) {
-    this.setState({
-      targetFile: files[0],
-      buttonState: '',
-      srcFile: this.state.srcFile
-    }); 
-    if(this.state.srcFile && this.state.buttonState === 'disabled') {
-      this.setState({ 
-        buttonState: '',
-        srcFile: this.state.srcFile,
-        targetFile: this.state.targetFile
-      });
+  })
+  const { getRootProps: getTargetRootProps, getInputProps: getTargetInputProps, isDragActive: isTargetDragActive } = useDropzone({
+    onDrop: onTargetImageDrop,
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png'],
     }
-  }
+  })
 
-  downloadFile = (absoluteUrl) => {
+  const downloadFile = (absoluteUrl) => {
     let link = document.createElement('a');
     link.href = absoluteUrl;
     link.download = 'morph';
@@ -54,101 +44,65 @@ export default class ImageForm extends React.Component {
     document.body.removeChild(link);
   };
 
-  handleImageUpload() {
-
-    this.setState({ 
-      buttonState: 'loading',
-      srcFile: this.state.srcFile,
-      targetFile: this.state.targetFile
-    });
+  const handleImageUpload = () => {
+    setButtonState('loading');
 
     let data = new FormData();
-    data.append('src_file', this.state.srcFile);
-    data.append('target_file', this.state.targetFile);
-    // const multi_config = { headers: { 'Content-Type': 'multipart/form-data; boundary=${data._boundary}' } };
+    data.append('src_file', srcFile);
+    data.append('target_file', targetFile);
 
     axios
       .post('images/upload', data)
       .then(resp => {
-
-        this.setState({
-          buttonState: 'success',
-          srcFile: this.state.srcFile,
-          targetFile: this.state.targetFile
-        });
+        setButtonState('success');
         setTimeout(() => {
           let url = resp.data;
-          this.downloadFile(url);
+          downloadFile(url);
         }, 1000);
-      }) 
+      })
       .catch(err => {
         console.error(err);
-        this.setState({
-          buttonState: 'error',
-          srcFile: this.state.srcFile,
-          targetFile: this.state.targetFile
-        });
+        setButtonState('error');
       });
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <div className="dropzone-container">
-          <Dropzone
-            className="dropzone"
-            style={{
-              backgroundImage: `url(${this.state.srcFile?this.state.srcFile.preview:''})`
-            }}
-            multiple={false}
-            accept="image/*"
-            onDrop={this.onSrcImageDrop.bind(this)}
-          >
-            <p>Drop an image or click to select a file to upload.</p>
-          </Dropzone>
-          {/* {this.state.srcFile ? (
-            <div>
-              <div>
-                <img
-                  width="100"
-                  height="100"
-                  src={this.state.srcFile.preview}
-                />
-              </div>
-            </div>
-          ) : null} */}
-        </div>
-        <div className="dropzone-container">
-          <Dropzone
-            className="dropzone"
-            style={{
-              backgroundImage: `url(${this.state.targetFile?this.state.targetFile.preview:''})`
-            }}
-            multiple={false}
-            accept="image/*"
-            onDrop={this.onTargetImageDrop.bind(this)}
-          >
-            <p>Drop an image or click to select a file to upload.</p>
-          </Dropzone>
+  const srcStyle = {
+    backgroundImage: `url(${srcFile ? URL.createObjectURL(srcFile) : ''})`
+  };
 
-          {/* {this.state.targetFile ? (
-            <div>
-              <div>
-                <img
-                  width="100"
-                  height="100"
-                  src={this.state.targetFile.preview}
-                />
-              </div>
-            </div>
-          ) : null} */}
-        </div>
-        <div style={{margin: '20px'}}>
-          <ProgressButton onClick={this.handleImageUpload.bind(this)}  state={this.state.buttonState}>
-            Morph image
-          </ProgressButton>
+  const targeStyle = {
+    backgroundImage: `url(${targetFile ? URL.createObjectURL(srcFile) : ''})`
+  };
+
+  return (
+    <div>
+      <div className="dropzone-container">
+        <div {...getSrcRootProps({className:'dropzone', style:srcStyle})}>
+          <input {...getSrcInputProps()} />
+          {
+            isSrcDragActive ?
+              <p>Drop the files here ...</p> :
+              <p>Drag 'n' drop some files here, or click to select files</p>
+          }
         </div>
       </div>
-    );
-  }
-}
+      <div className="dropzone-container">
+        <div {...getTargetRootProps({className:'dropzone', style:targeStyle})}>
+          <input {...getTargetInputProps()} />
+          {
+            isTargetDragActive ?
+              <p>Drop the files here ...</p> :
+              <p>Drag 'n' drop some files here, or click to select files</p>
+          }
+        </div>
+      </div>
+      <div style={{ margin: '20px' }}>
+        <ProgressButton onClick={handleImageUpload} state={buttonState}>
+          Morph image
+        </ProgressButton>
+      </div>
+    </div>
+  );
+};
+
+export default ImageForm;
