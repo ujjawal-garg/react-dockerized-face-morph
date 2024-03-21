@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone'
+import React, { useState, useCallback, useMemo } from 'react';
+import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import ProgressButton from 'react-progress-button';
 
@@ -9,30 +9,28 @@ const ImageForm = () => {
   const [buttonState, setButtonState] = useState('disabled');
 
   const onSrcImageDrop = useCallback(acceptedFiles => {
-    console.log('src dropped', acceptedFiles);
     setSrcFile(acceptedFiles[0]);
     setButtonState(targetFile ? '' : 'disabled');
-  }, []);
+  }, [targetFile]);
 
 
   const onTargetImageDrop = useCallback(acceptedFiles => {
-    console.log('target dropped', acceptedFiles);
     setTargetFile(acceptedFiles[0]);
     setButtonState(srcFile ? '' : 'disabled');
-  }, []);
+  }, [srcFile]);
 
   const { getRootProps: getSrcRootProps, getInputProps: getSrcInputProps, isDragActive: isSrcDragActive } = useDropzone({
     onDrop: onSrcImageDrop,
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png'],
     }
-  })
+  });
   const { getRootProps: getTargetRootProps, getInputProps: getTargetInputProps, isDragActive: isTargetDragActive } = useDropzone({
     onDrop: onTargetImageDrop,
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png'],
     }
-  })
+  });
 
   const downloadFile = (absoluteUrl) => {
     let link = document.createElement('a');
@@ -66,13 +64,13 @@ const ImageForm = () => {
       });
   };
 
-  const srcStyle = {
-    backgroundImage: `url(${srcFile ? URL.createObjectURL(srcFile) : ''})`
-  };
+  const srcStyle = useMemo(() => {
+    return { backgroundImage: `url(${srcFile ? URL.createObjectURL(srcFile) : ''})` };
+  }, [srcFile]);
 
-  const targeStyle = {
-    backgroundImage: `url(${targetFile ? URL.createObjectURL(srcFile) : ''})`
-  };
+  const targeStyle = useMemo(() => {
+    return { backgroundImage: `url(${targetFile ? URL.createObjectURL(srcFile) : ''})` };
+  }, [targetFile]);
 
   return (
     <div>
@@ -82,7 +80,7 @@ const ImageForm = () => {
           {
             isSrcDragActive ?
               <p>Drop the files here ...</p> :
-              <p>Drag 'n' drop some files here, or click to select files</p>
+              <p>Drag and drop some files here, or click to select files</p>
           }
         </div>
       </div>
@@ -92,7 +90,7 @@ const ImageForm = () => {
           {
             isTargetDragActive ?
               <p>Drop the files here ...</p> :
-              <p>Drag 'n' drop some files here, or click to select files</p>
+              <p>Drag and drop some files here, or click to select files</p>
           }
         </div>
       </div>
