@@ -4,12 +4,12 @@ MAINTAINER Ujjawal Garg <ujjawal.1224@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install nodejs carbon
+# Install nodejs Gallium
 RUN apt-get update && apt-get -y install curl \
-	&& curl -sL https://deb.nodesource.com/setup_20.x | bash \
+	&& curl -sL https://deb.nodesource.com/setup_16.x | bash \
 	&& apt-get install -y nodejs build-essential
 
-RUN npm i npm@10.5.0 -g
+RUN npm i npm@8.19.4 -g
 
 # Create app directory
 WORKDIR /usr/src/app
