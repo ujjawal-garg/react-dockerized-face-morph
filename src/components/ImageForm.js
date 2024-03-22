@@ -69,7 +69,7 @@ const ImageForm = () => {
   }, [srcFile]);
 
   const targeStyle = useMemo(() => {
-    return { backgroundImage: `url(${targetFile ? URL.createObjectURL(srcFile) : ''})` };
+    return { backgroundImage: `url(${targetFile ? URL.createObjectURL(targetFile) : ''})` };
   }, [targetFile]);
 
   return (
@@ -79,8 +79,8 @@ const ImageForm = () => {
           <input {...getSrcInputProps()} />
           {
             isSrcDragActive ?
-              <p>Drop the files here ...</p> :
-              <p>Drag and drop some files here, or click to select files</p>
+              <p>Drop the source face here ...</p> :
+              <p>Drag and drop source face here, or click to select a file</p>
           }
         </div>
       </div>
@@ -89,14 +89,14 @@ const ImageForm = () => {
           <input {...getTargetInputProps()} />
           {
             isTargetDragActive ?
-              <p>Drop the files here ...</p> :
-              <p>Drag and drop some files here, or click to select files</p>
+              <p>Drop the target face here ...</p> :
+              <p>Drag and drop target face here, or click to select a file</p>
           }
         </div>
       </div>
       <div style={{ margin: '20px' }}>
         <ProgressButton onClick={handleImageUpload} state={buttonState}>
-          Morph image
+          Generate morph video
         </ProgressButton>
       </div>
     </div>
