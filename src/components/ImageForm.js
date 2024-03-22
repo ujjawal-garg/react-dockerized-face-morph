@@ -32,10 +32,9 @@ const ImageForm = () => {
     }
   });
 
-  const downloadFile = (absoluteUrl) => {
+  const downloadFile = (fileName) => {
     let link = document.createElement('a');
-    link.href = absoluteUrl;
-    link.download = 'morph';
+    link.href = `download/${fileName}`;
     document.body.appendChild(link);
     console.info('downloading...');
     link.click();
@@ -54,8 +53,8 @@ const ImageForm = () => {
       .then(resp => {
         setButtonState('success');
         setTimeout(() => {
-          let url = resp.data;
-          downloadFile(url);
+          let fileName = resp.data;
+          downloadFile(fileName);
         }, 1000);
       })
       .catch(err => {

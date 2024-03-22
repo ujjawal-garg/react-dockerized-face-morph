@@ -42,3 +42,6 @@ images/
 *.pyc
 *.mp4
 *.avi
+
+# Mac files
+.DS_Store

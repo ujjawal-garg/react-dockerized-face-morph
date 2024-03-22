@@ -5,6 +5,7 @@ import serverRender from './serverRender';
 import sassMiddleware from 'node-sass-middleware';
 import path from 'path';
 import config from './config';
+import { unlinkSync } from "fs";
 
 const server = express();
 
@@ -38,6 +39,18 @@ server.get('/', (req, res) => {
   }).catch(console.error);
 });
 
+server.get('/download/:filename', (req, res) => {
+  const fileWithPath = `./generated/${req.params.filename}`
+  res.download(fileWithPath, 'morph_video.mp4', function (error) {
+    if (error) {
+      console.log(error)
+    } else {
+      unlinkSync(fileWithPath);
+      console.log('Downloading success')
+    }
+  });
+});
+
 server.post('/images/upload',upload.fields([{ name: 'src_file', maxCount: 1 }, { name: 'target_file', maxCount: 1 }]), (req, res) => {
   // console.info(JSON.stringify(req.fields));
   // console.info(req.body);
@@ -51,15 +64,16 @@ server.post('/images/upload',upload.fields([{ name: 'src_file', maxCount: 1 }, {
     pythonOptions: ['-u'],
     pythonPath: config.pyEnvPath,
     scriptPath: config.pyScriptPath,
-    args: [srcImgpath,targetImgPath,`${config.pyScriptPath}/shape_predictor_68_face_landmarks.dat`, `public/${new_file_name}`]
+    args: [srcImgpath,targetImgPath,`${config.pyScriptPath}/shape_predictor_68_face_landmarks.dat`, `generated/${new_file_name}`]
   };
 
   PythonShell.run('face_morph.py', options).then(results=>{
     // results is an array consisting of messages collected during execution
     console.log('results: %j', results);
+    unlinkSync(srcImgpath);
+    unlinkSync(targetImgPath);
     if (res) {
       res.send(`${new_file_name}`);
-      // res.sendFile('morph_video.mp4', {root: path.join(__dirname, 'public')});
     }
   })
   .catch(err => {
