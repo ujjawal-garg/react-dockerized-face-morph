@@ -1,13 +1,12 @@
 import express from 'express';
-import PythonShell from 'python-shell';
+import { PythonShell } from 'python-shell';
 import multer from 'multer';
 import serverRender from './serverRender';
 import sassMiddleware from 'node-sass-middleware';
 import path from 'path';
 import config from './config';
 
-
-const server  = express();
+const server = express();
 
 server.use(sassMiddleware({
   src: path.join(__dirname, 'sass'),
@@ -55,44 +54,20 @@ server.post('/images/upload',upload.fields([{ name: 'src_file', maxCount: 1 }, {
     args: [srcImgpath,targetImgPath,`${config.pyScriptPath}/shape_predictor_68_face_landmarks.dat`, `public/${new_file_name}`]
   };
 
-  let shell = new PythonShell('face_morph.py', options);
-  shell.on('message', msg => {
-    console.info(msg);
-  });
-
-  shell.on('close', () => {
-    if(res){
+  PythonShell.run('face_morph.py', options).then(results=>{
+    // results is an array consisting of messages collected during execution
+    console.log('results: %j', results);
+    if (res) {
       res.send(`${new_file_name}`);
+      // res.sendFile('morph_video.mp4', {root: path.join(__dirname, 'public')});
     }
-
-  });
-
-  shell.on('error', err => {
-    console.info(err);
-    res.status(500).end();
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(500).send({ message: `Internal Server Error.\n\n${err}` }).end();
     res = null;
-    // if (err) throw err;
   });
-
-  // PythonShell.run('face_morph.py', options, function (err, results) {
-  //   if (err) throw err;
-  //   // results is an array consisting of messages collected during execution
-  //   console.info('results: %j', results);
-  //   res.send(`${new_file_name}`);
-  //   // res.sendFile('morph_video.mp4', {root: path.join(__dirname, 'public')});
-  //   // res.status(200).json({
-  //   //     message: 'Image Uploaded Successfully !', 
-  //   //     srcPath: srcImgpath, 
-  //   //     pyResult: results,
-  //   //     targetPath: targetImgPath
-  //   // });
-  // });
-  
 });
-    
-
-
-
 
 server.use(express.static('public'));
 

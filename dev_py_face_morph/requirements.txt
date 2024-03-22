@@ -1,0 +1,6 @@
+ffmpeg==1.4
+ffprobe==0.5
+numpy==1.26.4
+pillow==10.2.0
+scikit-video==1.1.11
+scipy==1.12.0
