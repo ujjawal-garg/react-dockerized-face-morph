@@ -1,0 +1,4 @@
+# Ignore everything in this directory
+*
+# Except this file. We need this directory in git so that it is available in server
+!.gitignore
